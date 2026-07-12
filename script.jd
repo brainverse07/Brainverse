@@ -1,0 +1,55 @@
+const chatBox = document.getElementById("chatBox");
+const userInput = document.getElementById("userInput");
+const sendBtn = document.getElementById("sendBtn");
+const voiceBtn = document.getElementById("voiceBtn");
+
+function addMessage(text, sender) {
+    const div = document.createElement("div");
+    div.className = sender === "user" ? "user-message" : "ai-message";
+    div.innerHTML = text;
+    chatBox.appendChild(div);
+    chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+async function sendMessage() {
+    const message = userInput.value.trim();
+
+    if (!message) return;
+
+    addMessage(message, "user");
+    userInput.value = "";
+
+    addMessage("🤖 Thinking...", "ai");
+
+    setTimeout(() => {
+        const thinking = document.querySelector(".ai-message:last-child");
+        thinking.innerHTML =
+            "This is a demo response. Next we'll connect BrainVerse AI to a real AI model like Google Gemini or OpenAI so it can answer your questions.";
+    }, 1200);
+}
+
+sendBtn.addEventListener("click", sendMessage);
+
+userInput.addEventListener("keydown", function(e){
+    if(e.key==="Enter" && !e.shiftKey){
+        e.preventDefault();
+        sendMessage();
+    }
+});
+
+if ('webkitSpeechRecognition' in window) {
+
+const recognition = new webkitSpeechRecognition();
+
+recognition.continuous = false;
+recognition.lang = "en-US";
+
+voiceBtn.onclick = () => {
+recognition.start();
+};
+
+recognition.onresult = (event) => {
+userInput.value = event.results[0][0].transcript;
+};
+
+}
